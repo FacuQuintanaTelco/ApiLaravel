@@ -50,21 +50,20 @@
             Chat
     --------------------*/
     .chat {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
-    height: 80vh;
-    max-height: 500px;
-    z-index: 2;
-    overflow: hidden;
-    box-shadow: 0 5px 30px rgba(0, 0, 0, .2);
-    background: rgba(0, 0, 0, .5);
-    border-radius: 20px;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
+        opacity: 0;
+        position: relative;
+        width: 300px;
+        height: 80vh;
+        max-height: 500px;
+        z-index: 2;
+        overflow: hidden;
+        box-shadow: 7px 9px 21px 1px rgba(0,0,0, 0.4);
+        background: rgba(0, 0, 0, .5);
+        border-radius: 20px;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        margin-inline: auto;
     }
 
 
@@ -371,24 +370,56 @@ textarea:focus:-webkit-placeholder{
     transform: translateY(-10px);
   }
 }
+.burbuja{
+    width: 60px;
+    height: 60px;
+    background-color: #C3D500;
+    border-radius: 50%;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: 20px;
+    transition: all 200ms ease-in-out;
+    align-content: center;
+}
+.burbuja:hover{
+    box-shadow: 0 0 27px 1.5px rgba(0, 0, 0, .2);
+}
+.burbujaIcon{
+    margin-inline: auto;
+    display: flex;
+    width: 40%;
+}
+.rotate {
+    transition: transform 0.5s ease-in-out; 
+    transform: rotate(180deg); 
+}
+.rotate2 {
+    transition: transform 0.5s ease-in-out; 
+    transform: rotate(-180deg); 
+}
 
     </style>
 </head>
 <body>
-    <div class="chat">
-        <div class="chat-title">
-            <h1>Fabio Ottaviani</h1>
-            <h2>Supah</h2>
-            <figure class="avatar">
-                <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" />
-            </figure>
+    <div>   
+        <div class="chat">
+            <div class="chat-title">
+                <h1>IA.Pasante</h1>
+                <h2>TelCoIA</h2>
+                <figure class="avatar">
+                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" />
+                </figure>
+            </div>
+            <div class="messages">
+                <div class="messages-content"></div>
+            </div>
+            <div class="message-box">
+                <textarea type="text" class="message-input" placeholder="Type message..."></textarea>
+                <button type="submit" class="message-submit">Send</button>
+            </div>
         </div>
-        <div class="messages">
-            <div class="messages-content"></div>
-        </div>
-        <div class="message-box">
-            <textarea type="text" class="message-input" placeholder="Type message..."></textarea>
-            <button type="submit" class="message-submit">Send</button>
+        <div class="burbuja">
+            <img src="resources/svg/burbujamsg.svg" id="burbujaIcon" class="burbujaIcon" alt="Burbuja">
         </div>
     </div>
     <!-- <div class="bg"></div> -->
@@ -398,6 +429,34 @@ textarea:focus:-webkit-placeholder{
     var $messages = $('.messages-content'),
     d, h, m,
     i = 0;
+
+    $('#burbujaIcon').click(function() {
+        let chatElement = $('.chat');
+        let $this = $(this);
+        if (chatElement.css('opacity') == 0) {
+            $this.addClass('rotate');
+            chatElement.animate({ opacity: 1 }, 250, function() {
+                $this.attr('src', 'resources/svg/burbujamsg2.png');  
+                $this.attr('style', 'width: 100%;');
+                setTimeout(function() {
+                    $this.removeClass('rotate');
+                }, 250);
+            });
+        } else {
+            $this.addClass('rotate2');
+            chatElement.animate({ opacity: 0 }, 250, function() {
+                $this.attr('src', 'resources/svg/burbujamsg.svg');
+                $this.attr('style', '');
+                $this.removeClass('rotate2');
+                setTimeout(function() {
+                    
+                }, 250);
+            });
+        }
+    });
+
+
+
 
     $(window).load(function() {
     $messages.mCustomScrollbar();
@@ -446,23 +505,24 @@ textarea:focus:-webkit-placeholder{
     }
     })
 
-    var Fake = [
-    'Hi there, I\'m Fabio and you?',
-    'Nice to meet you',
-    'How are you?',
-    'Not too bad, thanks',
-    'What do you do?',
-    'That\'s awesome',
-    'Codepen is a nice place to stay',
-    'I think you\'re a nice person',
-    'Why do you think that?',
-    'Can you explain?',
-    'Anyway I\'ve gotta go now',
-    'It was a pleasure chat with you',
-    'Time to make a new codepen',
-    'Bye',
+    const Fake = [
+    'Hola, soy TELCOIA, ¿y tú?',
+    'Encantado de conocerte',
+    '¿Cómo estás?',
+    'No tan mal, gracias',
+    '¿A qué te dedicas?',
+    'Eso es genial',
+    'TelCo es un buen lugar para estar',
+    'Creo que eres una buena persona',
+    '¿Por qué piensas eso?',
+    '¿Puedes explicar?',
+    'De todos modos, ya me tengo que ir',
+    'Fue un placer charlar contigo',
+    'Es hora de hacer un nuevo proyecto',
+    'Adiós',
     ':)'
-    ]
+]
+
 
     function fakeMessage() {
     if ($('.message-input').val() != '') {
