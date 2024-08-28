@@ -8,7 +8,7 @@
 <body>
     <div id="chatbotTelCo"></div>
     <script>
-        fetch('http://127.0.0.1:8000/api/chatbot')
+        fetch('http://192.168.21.228:8000/api/chatbot')
             .then(response => response.json())
             .then(data => {
                 document.getElementById('chatbotTelCo').innerHTML = data.iframe;
