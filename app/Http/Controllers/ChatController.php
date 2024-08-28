@@ -10,7 +10,7 @@ class ChatController extends Controller
     {
         $content = view('chatbot')->render();
         return response()->json([
-            'iframe' => '<iframe srcdoc="' . htmlspecialchars($content) . '" width="300" height="320"></iframe>'
+            'iframe' => '<iframe srcdoc="' . htmlspecialchars($content) . '" width="350" height="550" style="border: unset;border: unset;position: absolute;right: 0;bottom: 0;"></iframe>'
         ]);
     }
 }
