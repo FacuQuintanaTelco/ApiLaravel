@@ -26,7 +26,7 @@
     }
 
     body {
-    background: linear-gradient(135deg, #044f48, #2a7561);
+    /* background: linear-gradient(135deg, #044f48, #2a7561); */
     background-size: cover;
     font-family: 'Open Sans', sans-serif;
     font-size: 12px;
@@ -286,8 +286,8 @@
   background: rgba(0, 0, 0, 0.3);
   padding: 10px;
   position: relative;
-  
-  & .message-input {
+}
+.message-box .message-input {
     background: none;
     border: none;
     outline: none!important;
@@ -298,13 +298,13 @@
     margin: 0;
     padding-right: 20px;
     width: 265px;
-  }
+}
   
-  textarea:focus:-webkit-placeholder{
-      color: transparent;
-  }
+textarea:focus:-webkit-placeholder{
+    color: transparent;
+}
   
-  & .message-submit {
+.message-submit {
     position: absolute;
     z-index: 1;
     top: 9px;
@@ -319,11 +319,9 @@
     border-radius: 10px;
     outline: none!important;
     transition: background .2s ease;
-    
-    &:hover {
-      background: #1D7745;
-    }
-  }
+}
+.message-submit:hover {
+    background: #1D7745;
 }
 
 
@@ -393,7 +391,7 @@
             <button type="submit" class="message-submit">Send</button>
         </div>
     </div>
-    <div class="bg"></div>
+    <!-- <div class="bg"></div> -->
 </body>
 </html>
 <script>
