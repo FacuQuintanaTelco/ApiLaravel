@@ -430,8 +430,13 @@
     var $messages = $('.messages-content'),
     d, h, m,
     i = 0;
+    let primerMsg = true;
 
     $('#burbujaIcon').click(function() {
+        if(primerMsg) {
+            preCargaMsg();
+            primerMsg = false;
+        }
         let chatElement = $('.chat');
         let $this = $(this);
         if (chatElement.css('opacity') == 0) {
@@ -459,12 +464,12 @@
 
 
 
-    $(window).load(function() {
-    $messages.mCustomScrollbar();
-    setTimeout(function() {
-        fakeMessage();
-    }, 100);
-    });
+    function preCargaMsg () {
+        $messages.mCustomScrollbar();
+        setTimeout(function() {
+            fakeMessage();
+        }, 100);
+    };
 
     function updateScrollbar() {
     $messages.mCustomScrollbar("update").mCustomScrollbar('scrollTo', 'bottom', {
