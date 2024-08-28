@@ -6,14 +6,14 @@
     <title>Chatbot Iframe</title>
 </head>
 <body>
-    <div id="iframe-container"></div>
+    <div id="chatbotTelCo"></div>
     <script>
         fetch('http://127.0.0.1:8000/api/chatbot')
             .then(response => response.json())
             .then(data => {
-                document.getElementById('iframe-container').innerHTML = data.iframe;
+                document.getElementById('chatbotTelCo').innerHTML = data.iframe;
             })
-            .catch(error => console.error('Error fetching iframe:', error));
+            .catch(error => console.error('Error al obtener el iframe:', error));
     </script>
 </body>
 </html>
