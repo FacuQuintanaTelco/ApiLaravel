@@ -112,9 +112,14 @@ async function preCargaMsg() {
             .map(o => o.message)
             .filter(o => o && o.content); // Filtra solo los mensajes válidos
 
-        // Solo toma el primer mensaje de respuesta
-        const contenido = jsonObjects.length > 0 ? jsonObjects[0].content : null;
-        return contenido;
+        let reps = []
+        // Solo toma el primer mensaje de respuesta        
+            jsonObjects.forEach(message => {
+                reps.push(message.content);
+            })
+        return reps
+      
+        
 
     } catch (error) {
         console.error('Error:', error);
