@@ -1,4 +1,5 @@
 const divPrincipal = document.getElementById("chatbotTelCo");
+if(!divPrincipal) console.error("No se encontro el div principal");
 divPrincipal.innerHTML = `
     <div class="chat">
         <div class="chat-title">
@@ -34,7 +35,7 @@ const burbujaIconSVG2DataUri = `data:image/svg+xml;charset=utf-8,${burbujaIconSV
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    const messages = document.getElementById('messages-content');
+const messages = document.getElementById('messages-content');
 let d, h, m;
 let i = 0;
 let primerMsg = true;
@@ -43,7 +44,7 @@ const messageSubmit = document.querySelector('.message-submit');
 
 burbujaIcon.addEventListener('click', async function() {
     if (primerMsg) {
-        await preCargaMsg();            
+        chat('Saluda al usuario. SOLO EL RESULTADO, NINGUN TEXTO MAS.');            
         primerMsg = false;
     }
 
@@ -67,7 +68,42 @@ burbujaIcon.addEventListener('click', async function() {
     }
 });
 
-async function preCargaMsg() {
+messageSubmit.addEventListener('click', function() {  
+    console.log('click', messageInput.value); 
+    insertMessage(messageInput.value);
+});
+
+window.addEventListener('keydown', function(e) {
+    if (e.which === 13) {
+        console.log('enter', messageInput.value); 
+        insertMessage(messageInput.value);
+        e.preventDefault();
+    }
+});
+
+function insertMessage(message) {
+    const msg = messageInput.value.trim();
+    if (msg === '') {
+        return false; 
+    }
+
+    const messagePersonal = document.createElement('div');
+    messagePersonal.className = 'message message-personal';
+    messagePersonal.innerText = msg;
+    messages.appendChild(messagePersonal);
+    messagePersonal.classList.add('new');
+    setDate();
+    messageInput.value = '';
+
+    updateScrollbar();
+
+    // Obtiene la respuesta del bot y llama a insertarMensajeRespuesta
+    chat(message).then(botResponse => {
+        insertarMensajeRespuesta(botResponse);
+    });
+}
+
+async function chat(message) {
     const url = 'https://oi.telco.com.ar/ollama/api/chat';
     const data = {
         "messages": [
@@ -77,7 +113,7 @@ async function preCargaMsg() {
             },
             {
                 "role": "user",
-                "content": "Solo saluda al usuario, como si fueses un profesor con premio nobel. SOLO EL RESULTADO, NINGUN TEXTO MAS."
+                "content": message
             }
         ],
         "model": "codestral:22b",
@@ -89,7 +125,10 @@ async function preCargaMsg() {
     };
 
     const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVjYjkwMWI1LTNhMTItNDQ1Ni1iNWE2LWQxYmJlNWM4ZmQxYyJ9.0gyADmNop_6sUJyCsAj_oAa98SMmotW2j4JBfECNFvU';
-
+    console.log(data);
+    if(data.messages[1].content == '' || data.messages[1].content == undefined){
+        data.messages[1].content = "Dile al usuario que ocurrio un error";
+    }
     try {
         const response = await fetch(url, {
             method: 'POST',
@@ -143,40 +182,7 @@ function setDate() {
     }
 }
 
-function insertMessage() {
-    const msg = messageInput.value.trim();
-    if (msg === '') {
-        return false; 
-    }
-
-    const messagePersonal = document.createElement('div');
-    messagePersonal.className = 'message message-personal';
-    messagePersonal.innerText = msg;
-    messages.appendChild(messagePersonal);
-    messagePersonal.classList.add('new');
-    setDate();
-    messageInput.value = '';
-
-    updateScrollbar();
-
-    // Obtiene la respuesta del bot y llama a fakeMessage
-    preCargaMsg().then(botResponse => {
-        fakeMessage(botResponse);
-    });
-}
-
-messageSubmit.addEventListener('click', function() {
-    insertMessage();
-});
-
-window.addEventListener('keydown', function(e) {
-    if (e.which === 13) {
-        insertMessage();
-        e.preventDefault();
-    }
-});
-
-function fakeMessage(messageBot = "Lo siento, no tengo respuesta en este momento.") {
+function insertarMensajeRespuesta(messageBot = "Lo siento, no tengo respuesta en este momento.") {
     const loadingMessage = document.createElement('div');
     loadingMessage.className = 'message loading new';
     const figure = document.createElement('figure');
