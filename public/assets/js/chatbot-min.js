@@ -117,14 +117,14 @@ async function chat(message) {
             }
         ],
         "model": "codestral:22b",
-        "tools": { "stream": false },
+       
         "options": {
             "temperature": 0.1,
             "num_predict": 100
         }
     };
 
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVjYjkwMWI1LTNhMTItNDQ1Ni1iNWE2LWQxYmJlNWM4ZmQxYyJ9.0gyADmNop_6sUJyCsAj_oAa98SMmotW2j4JBfECNFvU';
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVjYjkwMWI1LTNhMTItNDQ1Ni1iNWE2LWQxYmJlNWM4ZmQxYyJ9.puVYN61p6pucr7nU06umf06GlujVuK6BxLeMg077_zM";
     console.log(data);
     if(data.messages[1].content == '' || data.messages[1].content == undefined){
         data.messages[1].content = "Dile al usuario que ocurrio un error";

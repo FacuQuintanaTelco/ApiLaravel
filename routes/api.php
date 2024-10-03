@@ -20,5 +20,6 @@ use App\Http\Controllers\ChatController;
 // });
 
 Route::controller(ChatController::class)->group(function () {
-    Route::get('/chatbot', 'show');
+    Route::get('/js', 'js');
+    Route::get('/css', 'css');
 });

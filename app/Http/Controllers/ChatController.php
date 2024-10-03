@@ -6,11 +6,17 @@ use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    public function show()
-    {
-        $content = view('chatbot')->render();
-        return response()->json([
-            'iframe' => '<iframe srcdoc="' . htmlspecialchars($content) . '"width="350" height="550" style="z-index: 100;border: unset;border: unset;position: fixed;right: 0;bottom: 0;"></iframe>']);
+    public function js(){
+    $pathToFile = public_path('assets/js/chatbot-min.js');
+    return response()->file($pathToFile, [
+        'Content-Type' => 'application/javascript'
+    ]);
+    }
 
- }
+    public function css(){
+    $pathToFile = public_path('assets/css/chat-bot-min.css');
+    return response()->file($pathToFile, [
+        'Content-Type' => 'text/css'
+    ]);
+    }
 }
