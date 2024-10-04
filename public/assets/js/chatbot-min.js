@@ -5,6 +5,7 @@ divPrincipal.innerHTML = `
         <div class="chat-title">
             <h1>IA.Pasante</h1>
             <h2>TelCoIA</h2>
+            <button id="clearChat">Nuevo</button>
             <figure class="avatar">
                 <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" />
             </figure>
@@ -41,10 +42,13 @@ let i = 0;
 let primerMsg = true;
 const messageInput = document.querySelector('.message-input');
 const messageSubmit = document.querySelector('.message-submit');
+if (!localStorage.getItem('LastAns')) localStorage.setItem('LastAns', '');
+if (!localStorage.getItem('body')) localStorage.setItem('body', '');
+let LastAns = localStorage.getItem('LastAns');
 
 burbujaIcon.addEventListener('click', async function() {
-    if (primerMsg) {
-        chat('Saluda al usuario. SOLO EL RESULTADO, NINGUN TEXTO MAS.');            
+    if (primerMsg && (LastAns != 'bot' || LastAns == '')) {        
+        await insertMessage('Saluda al usuario. SOLO EL RESULTADO, NINGUN TEXTO MAS.', true);
         primerMsg = false;
     }
 
@@ -69,34 +73,33 @@ burbujaIcon.addEventListener('click', async function() {
 });
 
 messageSubmit.addEventListener('click', function() {  
-    console.log('click', messageInput.value); 
+    localStorage.setItem('LastAns', 'user');   
     insertMessage(messageInput.value);
 });
 
 window.addEventListener('keydown', function(e) {
-    if (e.which === 13) {
-        console.log('enter', messageInput.value); 
+    if (e.which === 13) {        
+        localStorage.setItem('LastAns', 'user');        
         insertMessage(messageInput.value);
         e.preventDefault();
     }
 });
 
-function insertMessage(message) {
-    const msg = messageInput.value.trim();
-    if (msg === '') {
-        return false; 
+function insertMessage(message, firstMsg = false, msg = '') {
+    if(msg == '') msg = messageInput.value.trim();
+    if(!firstMsg){
+        if (msg === '') {
+            return false; 
+        }
+        const messagePersonal = document.createElement('div');
+        messagePersonal.className = 'message message-personal';
+        messagePersonal.innerText = msg;
+        messages.appendChild(messagePersonal);
+        messagePersonal.classList.add('new');
+        setDate();
+        messageInput.value = '';
+        updateScrollbar();
     }
-
-    const messagePersonal = document.createElement('div');
-    messagePersonal.className = 'message message-personal';
-    messagePersonal.innerText = msg;
-    messages.appendChild(messagePersonal);
-    messagePersonal.classList.add('new');
-    setDate();
-    messageInput.value = '';
-
-    updateScrollbar();
-
     // Obtiene la respuesta del bot y llama a insertarMensajeRespuesta
     chat(message).then(botResponse => {
         insertarMensajeRespuesta(botResponse);
@@ -105,27 +108,27 @@ function insertMessage(message) {
 
 async function chat(message) {
     const url = 'https://oi.telco.com.ar/ollama/api/chat';
+    let cuerpo = cargaRespuestaUser(message);
+    
     const data = {
+        "model": "llama3.1:latest",
         "messages": [
             {
                 "role": "system",
-                "content": "Vas a actuar como un profesor de matematica que ganó el premio nobel.\nHABLAME EN ESPAÑOL POR FAVOR."
+                "content": "Vas a actuar como un asistente de clientes para la empresa TelCo sapem, esta es una empresa proveedora de internet para ISP privados o entes publicos. No ofrece internet a usuarios finales. Si te consultan siempre pregunta si se trata de un usuario final. SIEMPRE RESPUESTAS EN ESPAÑOL."
             },
-            {
-                "role": "user",
-                "content": message
-            }
+            ...cuerpo 
         ],
-        "model": "codestral:22b",
-       
         "options": {
-            "temperature": 0.1,
-            "num_predict": 100
-        }
+            "temperature": 0.9,
+            "top_p": 0.1,
+            "num_predict": 100,
+        },
+        "stream": true
     };
+    
 
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVjYjkwMWI1LTNhMTItNDQ1Ni1iNWE2LWQxYmJlNWM4ZmQxYyJ9.puVYN61p6pucr7nU06umf06GlujVuK6BxLeMg077_zM";
-    console.log(data);
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVjYjkwMWI1LTNhMTItNDQ1Ni1iNWE2LWQxYmJlNWM4ZmQxYyJ9.puVYN61p6pucr7nU06umf06GlujVuK6BxLeMg077_zM";    
     if(data.messages[1].content == '' || data.messages[1].content == undefined){
         data.messages[1].content = "Dile al usuario que ocurrio un error";
     }
@@ -135,6 +138,7 @@ async function chat(message) {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json',
             },
             body: JSON.stringify(data),
         });
@@ -142,28 +146,93 @@ async function chat(message) {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-
-        const textResponse = await response.text();
+        
+        const textResponse = await response.clone().text();
+        
         const jsonObjects = textResponse
-            .trim()
-            .split(/\n/)
-            .map(line => JSON.parse(line))
-            .map(o => o.message)
-            .filter(o => o && o.content); // Filtra solo los mensajes válidos
-
+        .trim()
+        .split(/(?<=})\s*(?={)/) // Divide entre los objetos JSON
+        .map(line => {
+            try {                                
+                return JSON.parse(line);
+            } catch (e) {
+                console.error('Error parsing JSON:', e);
+                return null;
+            }
+        })
+        .filter(o => o && o.message && o.message.content)
+        
         let reps = []
         // Solo toma el primer mensaje de respuesta        
-            jsonObjects.forEach(message => {
-                reps.push(message.content);
-            })
-        return reps
-      
-        
+            jsonObjects.forEach(message => {                
+                reps.push(message.message.content);
+            })            
+            
+        cargaRespuestaIA(reps);
+        return reps.join('')
 
     } catch (error) {
         console.error('Error:', error);
     }
 }
+
+const cargaRespuestaIA = (reps) =>{
+    body = localStorage.getItem('body');
+    cuerpo = JSON.parse(body);
+    cuerpo.push(
+        {
+            "role": "assistant",
+            "content": reps.join('')
+        }
+    );
+    localStorage.setItem('body', JSON.stringify(cuerpo));        
+    localStorage.setItem('LastAns', 'bot');
+}
+
+
+const cargaRespuestaUser = (message) =>{
+    let body = localStorage.getItem('body');
+    let cuerpo = [];
+    
+    if (body == '') {
+        cuerpo = [
+            {
+                "role": "user",
+                "content": message
+            }
+        ];
+        localStorage.setItem('body', JSON.stringify(cuerpo)); 
+    } else {
+        cuerpo = JSON.parse(body);
+        cuerpo.push(
+            {
+                "role": "user",
+                "content": message
+            }
+        );
+        localStorage.setItem('body', JSON.stringify(cuerpo)); 
+    }
+    return cuerpo;
+}
+
+const precargaChat = () => {
+    let body = localStorage.getItem('body');
+    if(body != ''){
+        body = JSON.parse(body); //evita la primera pregunta preprogramada
+        body = body.slice(1); //evita la primera pregunta preprogramada
+        body.map(b => {
+            if(b.role=='user') {
+                // insertMessage('', false, b.content);
+                console.log(b.content);
+                
+            }else{
+                // insertarMensajeRespuesta(b.content);
+                console.log(b.content);
+            }
+        })
+    }
+}
+precargaChat();
 
 function updateScrollbar() {
     if (messages) {
@@ -213,5 +282,11 @@ function insertarMensajeRespuesta(messageBot = "Lo siento, no tengo respuesta en
         updateScrollbar(); 
     }, 1000); 
 }
+const clearChat = () => {
+    localStorage.setItem('body', '');
+    localStorage.setItem('LastAns', '')    
+}
+
+document.getElementById('clearChat').addEventListener('click', clearChat);
 
 });
