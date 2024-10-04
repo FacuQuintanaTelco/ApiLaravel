@@ -86,24 +86,26 @@ window.addEventListener('keydown', function(e) {
 });
 
 function insertMessage(message, firstMsg = false, msg = '') {
-    if(msg == '') msg = messageInput.value.trim();
-    if(!firstMsg){
+    if (msg === '') msg = messageInput.value.trim();
+    if (!firstMsg) {
         if (msg === '') {
             return false; 
         }
         const messagePersonal = document.createElement('div');
         messagePersonal.className = 'message message-personal';
-        messagePersonal.innerText = msg;
+        messagePersonal.innerText = message || msg;
         messages.appendChild(messagePersonal);
         messagePersonal.classList.add('new');
         setDate();
         messageInput.value = '';
         updateScrollbar();
     }
-    // Obtiene la respuesta del bot y llama a insertarMensajeRespuesta
-    chat(message).then(botResponse => {
-        insertarMensajeRespuesta(botResponse);
-    });
+
+    if (message !== '') {
+        chat(message).then(botResponse => {
+            insertarMensajeRespuesta(botResponse);
+        });
+    }
 }
 
 async function chat(message) {
@@ -222,11 +224,12 @@ const precargaChat = () => {
         body = body.slice(1); //evita la primera pregunta preprogramada
         body.map(b => {
             if(b.role=='user') {
-                // insertMessage('', false, b.content);
+                insertMessage('', false, b.content);
                 console.log(b.content);
                 
             }else{
-                // insertarMensajeRespuesta(b.content);
+                insertarMensajeRespuesta(b.content);
+                setTimeout(() => { }, 1000);
                 console.log(b.content);
             }
         })
@@ -280,7 +283,7 @@ function insertarMensajeRespuesta(messageBot = "Lo siento, no tengo respuesta en
         newMessage.classList.add('new');
         setDate(); 
         updateScrollbar(); 
-    }, 1000); 
+    }, 0); 
 }
 const clearChat = () => {
     localStorage.setItem('body', '');
