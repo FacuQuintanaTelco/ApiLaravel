@@ -224,13 +224,10 @@ const precargaChat = () => {
         body = body.slice(1); //evita la primera pregunta preprogramada
         body.map(b => {
             if(b.role=='user') {
-                insertMessage('', false, b.content);
-                console.log(b.content);
-                
+                insertMessage('', false, b.content);                            
             }else{
                 insertarMensajeRespuesta(b.content, true);
                 setTimeout(() => { }, 1000);
-                console.log(b.content);
             }
         })
     }
