@@ -228,7 +228,7 @@ const precargaChat = () => {
                 console.log(b.content);
                 
             }else{
-                insertarMensajeRespuesta(b.content);
+                insertarMensajeRespuesta(b.content, true);
                 setTimeout(() => { }, 1000);
                 console.log(b.content);
             }
@@ -254,7 +254,8 @@ function setDate() {
     }
 }
 
-function insertarMensajeRespuesta(messageBot = "Lo siento, no tengo respuesta en este momento.") {
+
+function insertarMensajeRespuesta(messageBot = "Lo siento, no tengo respuesta en este momento.", precarga = false) {
     const loadingMessage = document.createElement('div');
     loadingMessage.className = 'message loading new';
     const figure = document.createElement('figure');
@@ -267,9 +268,8 @@ function insertarMensajeRespuesta(messageBot = "Lo siento, no tengo respuesta en
     messages.appendChild(loadingMessage);
     updateScrollbar();
 
-    setTimeout(function() {
+    const creacionDivMsg = (messageBot) => {        
         loadingMessage.remove(); 
-
         const newMessage = document.createElement('div');
         newMessage.className = 'message new';
         const newFigure = document.createElement('figure');
@@ -283,8 +283,20 @@ function insertarMensajeRespuesta(messageBot = "Lo siento, no tengo respuesta en
         newMessage.classList.add('new');
         setDate(); 
         updateScrollbar(); 
+    }
+
+    if (messageBot !== '' && !precarga) {
+    setTimeout(function() {
+        console.log('crea1: ', precarga);
+        
+        creacionDivMsg(messageBot);
     }, 0); 
+    }else if(messageBot !== '' && precarga){
+        console.log('crea2: ', precarga);
+        creacionDivMsg(messageBot);
+    }
 }
+
 const clearChat = () => {
     localStorage.setItem('body', '');
     localStorage.setItem('LastAns', '')    
