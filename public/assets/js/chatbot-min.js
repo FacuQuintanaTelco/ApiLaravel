@@ -3,12 +3,16 @@ if(!divPrincipal) console.error("No se encontro el div principal");
 divPrincipal.innerHTML = `
     <div class="chat">
         <div class="chat-title">
-            <h1>IA.Pasante</h1>
-            <h2>TelCoIA</h2>
-            <button id="clearChat">Nuevo</button>
-            <figure class="avatar">
-                <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" />
-            </figure>
+            <div>
+                <figure class="avatar">
+                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" />
+                </figure>
+                <div>
+                    <h1>IA.Pasante</h1>
+                    <h2>TelCoIA</h2>
+                </div>
+                <button id="clearChat">Nuevo</button>
+            </div>
         </div>
         <div class="messages" id="messages-content">
             <div class="messages-content" ></div>
@@ -220,8 +224,8 @@ const cargaRespuestaUser = (message) =>{
 const precargaChat = () => {
     let body = sessionStorage.getItem('body');
     if(body != ''){
-        body = JSON.parse(body); //evita la primera pregunta preprogramada
-        body = body.slice(1); //evita la primera pregunta preprogramada
+        body = JSON.parse(body);
+        body = body.slice(1);
         body.map(b => {
             if(b.role=='user') {
                 insertMessage('', false, b.content);                            
