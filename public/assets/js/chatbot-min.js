@@ -42,13 +42,13 @@ let i = 0;
 let primerMsg = true;
 const messageInput = document.querySelector('.message-input');
 const messageSubmit = document.querySelector('.message-submit');
-if (!localStorage.getItem('LastAns')) localStorage.setItem('LastAns', '');
-if (!localStorage.getItem('body')) localStorage.setItem('body', '');
-let LastAns = localStorage.getItem('LastAns');
+if (!sessionStorage.getItem('LastAns')) sessionStorage.setItem('LastAns', '');
+if (!sessionStorage.getItem('body')) sessionStorage.setItem('body', '');
+let LastAns = sessionStorage.getItem('LastAns');
 
 burbujaIcon.addEventListener('click', async function() {
     if (primerMsg && (LastAns != 'bot' || LastAns == '')) {        
-        await insertMessage('Saluda al usuario. SOLO EL RESULTADO, NINGUN TEXTO MAS.', true);
+        insertMessage('Saluda al usuario. SOLO EL RESULTADO, NINGUN TEXTO MAS.', true);
         primerMsg = false;
     }
 
@@ -73,13 +73,13 @@ burbujaIcon.addEventListener('click', async function() {
 });
 
 messageSubmit.addEventListener('click', function() {  
-    localStorage.setItem('LastAns', 'user');   
+    sessionStorage.setItem('LastAns', 'user');   
     insertMessage(messageInput.value);
 });
 
 window.addEventListener('keydown', function(e) {
     if (e.which === 13) {        
-        localStorage.setItem('LastAns', 'user');        
+        sessionStorage.setItem('LastAns', 'user');        
         insertMessage(messageInput.value);
         e.preventDefault();
     }
@@ -123,7 +123,7 @@ async function chat(message) {
         ],
         "options": {
             "temperature": 0.9,
-            "top_p": 0.1,
+            "top_p": 0.4,
             "num_predict": 100,
         },
         "stream": true
@@ -179,7 +179,7 @@ async function chat(message) {
 }
 
 const cargaRespuestaIA = (reps) =>{
-    body = localStorage.getItem('body');
+    body = sessionStorage.getItem('body');
     cuerpo = JSON.parse(body);
     cuerpo.push(
         {
@@ -187,13 +187,13 @@ const cargaRespuestaIA = (reps) =>{
             "content": reps.join('')
         }
     );
-    localStorage.setItem('body', JSON.stringify(cuerpo));        
-    localStorage.setItem('LastAns', 'bot');
+    sessionStorage.setItem('body', JSON.stringify(cuerpo));        
+    sessionStorage.setItem('LastAns', 'bot');
 }
 
 
 const cargaRespuestaUser = (message) =>{
-    let body = localStorage.getItem('body');
+    let body = sessionStorage.getItem('body');
     let cuerpo = [];
     
     if (body == '') {
@@ -203,7 +203,7 @@ const cargaRespuestaUser = (message) =>{
                 "content": message
             }
         ];
-        localStorage.setItem('body', JSON.stringify(cuerpo)); 
+        sessionStorage.setItem('body', JSON.stringify(cuerpo)); 
     } else {
         cuerpo = JSON.parse(body);
         cuerpo.push(
@@ -212,13 +212,13 @@ const cargaRespuestaUser = (message) =>{
                 "content": message
             }
         );
-        localStorage.setItem('body', JSON.stringify(cuerpo)); 
+        sessionStorage.setItem('body', JSON.stringify(cuerpo)); 
     }
     return cuerpo;
 }
 
 const precargaChat = () => {
-    let body = localStorage.getItem('body');
+    let body = sessionStorage.getItem('body');
     if(body != ''){
         body = JSON.parse(body); //evita la primera pregunta preprogramada
         body = body.slice(1); //evita la primera pregunta preprogramada
@@ -286,20 +286,27 @@ function insertarMensajeRespuesta(messageBot = "Lo siento, no tengo respuesta en
     }
 
     if (messageBot !== '' && !precarga) {
-    setTimeout(function() {
-        console.log('crea1: ', precarga);
-        
-        creacionDivMsg(messageBot);
-    }, 0); 
+        setTimeout(function() {            
+            creacionDivMsg(messageBot);
+        }, 0); 
     }else if(messageBot !== '' && precarga){
-        console.log('crea2: ', precarga);
         creacionDivMsg(messageBot);
     }
 }
 
+const clearDivChat = () => {
+    const messagesContent = document.getElementById('messages-content');
+    while (messagesContent.firstChild) {
+        messagesContent.removeChild(messagesContent.firstChild);
+    }
+}
+
 const clearChat = () => {
-    localStorage.setItem('body', '');
-    localStorage.setItem('LastAns', '')    
+    sessionStorage.setItem('body', '');
+    sessionStorage.setItem('LastAns', '')
+    clearDivChat();
+    insertMessage('Saluda al usuario. SOLO EL RESULTADO, NINGUN TEXTO MAS.', true);
+
 }
 
 document.getElementById('clearChat').addEventListener('click', clearChat);
