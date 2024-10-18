@@ -22,4 +22,5 @@ use App\Http\Controllers\ChatController;
 Route::controller(ChatController::class)->group(function () {
     Route::get('/js', 'js');
     Route::get('/css', 'css');
+    Route::post('/decode', 'decodeClave');
 });
