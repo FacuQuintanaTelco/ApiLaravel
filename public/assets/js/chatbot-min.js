@@ -21,17 +21,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="messages-content" ></div>
             </div>
             <div class="message-box">
-                
-                <textarea type="text" class="message-input" placeholder="Ingrese su consulta..."></textarea>
-                <button type="submit" class="message-submit">Send</button>
+                <div class="rowBtn">
+                    <label class="inputLabel" id="labelInput">                
+                        <input class="inputBtn fa fa-paperclip" type="file" id="pdfInput" accept="application/pdf" placeholder="archivo">                       
+                            <i class="fa-solid fa-paperclip"></i>                              
+                    </label>
+                </div>
+                <div class="areaMsg">
+                    <textarea type="text" class="message-input" placeholder="Ingrese su consulta..."></textarea>
+                    <button type="submit" class="message-submit btn">Send</button>
+                </div>
             </div>          
         </div>
         <div class="burbuja">
             <img src="" id="burbujaIcon" class="burbujaIcon" alt="Burbuja">
         </div>    
     `;
-    {/* <input type="file" id="pdfInput" accept="application/pdf">
-    <button id="sendPdf">Enviar PDF</button> */}
     const burbujaIconSVG1 = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><rect id="backgroundrect" width="100%" height="100%" x="0" y="0" fill="none" stroke="none"/><defs><style>.a{fill:none;}.b{fill:#4e8cff;}.c{clip-path:url(#a);}.d{fill:#fff;}.e{fill:#eff4f9;}</style><clipPath id="a"><path class="a" d="M 0 0 H 17.555 v 17.555 H 0 Z" id="svg_1" transform=""/></clipPath></defs><g class="currentLayer" style=""><title>Layer 1</title><g id="svg_2" class="selected" transform=""><g id="svg_3" transform=""><g class="c" id="svg_4" transform=""><g id="svg_5" transform=""><path class="d" d="M 17.556 8.77842 a 8.778 8.778 0 0 0 -8.778 -8.778 a 8.778 8.778 0 0 0 -8.778 8.778 a 8.745 8.745 0 0 0 2.26 5.879 v 1.442 c 0 0.8 0.492 1.457 1.1 1.457 h 5.83 a 0.843 0.843 0 0 0 0.183 -0.02 a 8.778 8.778 0 0 0 8.184 -8.757" id="svg_6" transform=""/></g><g id="svg_7" transform=""><path class="e" d="M 3.16148 8.921 a 9.292 9.292 0 0 1 6.38 -8.888 c -0.252 -0.022 -0.506 -0.033 -0.763 -0.033 a 8.774 8.774 0 0 0 -8.778 8.778 A 9.508 9.508 0 0 0 2.22447 14.7003 c 0.005 0 0 0.009 0 0.01 c -0.311 0.352 -1.924 2.849 0.021 2.849 h 2.25 c -1.23 -0.022 1.263 -2.107 0.269 -3.494 a 8.225 8.225 0 0 1 -1.6 -5.141" id="svg_8" transform=""/></g></g></g></g></g></svg>';
     const burbujaIconSVG1Escaped = encodeURIComponent(burbujaIconSVG1);
     const burbujaIconSVG1DataUri = `data:image/svg+xml;charset=utf-8,${burbujaIconSVG1Escaped}`;
@@ -51,10 +56,20 @@ document.addEventListener("DOMContentLoaded", () => {
     let primerMsg = true;
     const messageInput = document.querySelector('.message-input');
     const messageSubmit = document.querySelector('.message-submit');
+    const labelInput = document.getElementById('labelInput');
     if (!sessionStorage.getItem('LastAns')) sessionStorage.setItem('LastAns', '');
     if (!sessionStorage.getItem('body')) sessionStorage.setItem('body', '');
     if (!sessionStorage.getItem('archivos')) sessionStorage.setItem('archivos', []);
     let LastAns = sessionStorage.getItem('LastAns');
+
+    function addFonts () {
+        const link = document.createElement('link');
+        link.rel="stylesheet";
+        link.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css";
+        document.head.appendChild(link);
+    }
+
+    addFonts();
 
     burbujaIcon.addEventListener('click', async function() {
         if (primerMsg && (LastAns != 'bot' || LastAns == '')) {        
@@ -278,7 +293,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         }
     
-        document.getElementById('sendPdf').addEventListener('click', () => {
+        document.getElementById('pdfInput').addEventListener('change', () => {
+        labelInput.className += ' fileAñadido'
         uploadPDF();
         });
     }).catch((error) => {
