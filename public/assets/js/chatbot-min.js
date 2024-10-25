@@ -1,5 +1,5 @@
 
-document.addEventListener("DOMContentLoaded", () => {
+// document.addEventListener("DOMContentLoaded", () => {
 
     const divPrincipal = document.getElementById("chatbotTelCo");
     if(!divPrincipal) console.error("No se encontro el div principal");
@@ -8,11 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="chat-title">
                 <div>
                     <figure class="avatar">
-                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" />
+                        <img src="https://i.ibb.co/H2DzDF9/image-2.png" />
                     </figure>
                     <div>
-                        <h1>IA.Pasante</h1>
-                        <h2>TelCoIA</h2>
+                        <h1>WEE! Bot</h1>
+                        <h2>Ollama 3.1</h2>
                     </div>
                     <button id="clearChat">Nuevo</button>
                 </div>
@@ -20,13 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="messages" id="messages-content">
                 <div class="messages-content" ></div>
             </div>
-            <div class="message-box">
-                <div class="rowBtn">
-                    <label class="inputLabel" id="labelInput">                
-                        <input class="inputBtn fa fa-paperclip" type="file" id="pdfInput" accept="application/pdf" placeholder="archivo">                       
-                            <i class="fa-solid fa-paperclip"></i>                              
-                    </label>
-                </div>
+            <div class="message-box">                
                 <div class="areaMsg">
                     <textarea type="text" class="message-input" placeholder="Ingrese su consulta..."></textarea>
                     <button type="submit" class="message-submit btn">Send</button>
@@ -69,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.head.appendChild(link);
     }
 
-    addFonts();
+    // addFonts();
 
     burbujaIcon.addEventListener('click', async function() {
         if (primerMsg && (LastAns != 'bot' || LastAns == '')) {        
@@ -143,31 +137,33 @@ document.addEventListener("DOMContentLoaded", () => {
             "messages": [
                 {
                     "role": "system",
-                    "content": "Use the following context as your learned knowledge, inside <context></context> XML tags.\n\t<context>\n\t  Actualmente trabajas en TelCo SAPEM, eres un chatbot que respondera a usuarios finales o clientes del producto Wee!, este es una pasarela de pagos, donde los clientes tienen acceso a un backoffice donde pueden gestionar datos de las transacciones, pagos, entre otros. Siempre debes preguntar al principio si es un un usuario final, un cliente o un desarrollador. Todas las respuestas deben ser en español. Ademas, si debes responder directamente con el prefijo \“endpoint-\” seguido del nombre de la funcion solicitada, estos son los casos de endpoint que pueden consultar:\n \”holamundo\”, \”debin-fallido\”, \”consulta-debin\”, \”consulta-pagos\”.\n en el caso de que sea una consulta por debin, debes pedir la referencia externa del debin\n\t</context>\n\t\n\tWhen answer to user:\n\t- If you don't know, just say that you don't know.\n\t- If you don't know when you are not sure, ask for clarification.\n\tAvoid mentioning that you obtained the information from the context.\n\tAnd answer according to the language of the user's question.\n\t\t\t\n\tGiven the context information, answer the query.\n\tQuery: Saluda la usuario",
-                    "images": []
+                    "content": "Eres un asistente virtual en entrenamiento para TELCO SAPEM, especializado en ayudar a los usuarios con consultas sobre Wee!, una plataforma de pagos. Wee! permite a los usuarios realizar pagos mediante débito, crédito, DEBIN, QR, y pagos offline a través de vouchers en sucursales de Rapipago.\nComo asistente de Wee!, tu rol es responder dudas de manera clara y empática, ofreciendo soluciones prácticas para cada consulta. Nunca debes solicitar datos personales como DNI, dirección, números de referencia o pagos. Si alguna consulta se desvía de tu ámbito, explica que sólo puedes responder sobre Wee!. No pidas disculpas en exceso, sino que mantén una actitud de ayuda.\n Sigue estas reglas:\n\n 1.Claridad en las respuestas:  Responde de manera clara y directa. Muestra empatía, pero evita repetir disculpas innecesarias. Ejemplo: 'Entiendo tu preocupación, trabajemos juntos para solucionarlo'.\n\n2. Diferenciación de contextos: Hay dos tipos de consultas principales: \n # 1. Información sobre Wee!\nResponde consultas sobre pagos con debin, pagos offline, consulta de errores y Generación de DEBIN para CVU o cuentas virtuales! manteniendo un tono profesional.\n\n# 2. Información sobre Reparación de Notebooks\nResponde las consultas sobre reparación de notebooks proporcionando la siguiente información de contacto: 'incluirfuturo@mec.gob.ar' o al teléfono 3794 248030.\n\n#3. Para consultas de pagos:\nPara poder verificar la transacción necesitamos que nos envíes los siguientes datos a reclamoswee@telco.com.ar:\n1-Nombre y Apellido.\n2-DNI.\n3-Servicio que está abonando. \n4-Comprobante.\n\n#4 Pagos con DEBIN – Autorizar\n SI el usuario pregunta sobre como pagar con debin debes decirle:\nPara completar el pago y poder autorizar el DEBIN te sugerimos seguir estos pasos:\n 1. Ingresa a tu home banking o a la aplicación de tu banco (Dependiendo del Banco puede ser solo la web)\n2.   Busca en el menú de “Pagos a DEBIN” e ingresa a la opción “Solicitudes de DEBIN Recibidas” (según el banco los nombres del menú varían).\n3. Acepta el DEBIN generado, lo podés identificar como “CORRIENTES TELECOMUNICACIONES”.\nEs importante destacar que, según las regulaciones del BCRA (Banco Central de la República Argentina), el DEBIN solo está habilitado para entidades bancarias. Además, tienes un plazo de 6 horas para aceptar el DEBIN una vez que lo hayas generado.\n#5 Instrucciones para pagos OFFLINE\nSi el usuario consulta sobre pagos offline y como abonarlos debes responder, estos son vouchers que deben pagarse en oficinas como rapipago:\n¡Para terminar el proceso del pago debes abonar en rapipago!\nPara \tfinalizar la operación diríjase a una sucursal de Rapipago con el \trecibo de pago. \n#6 Consulta por Errores \nSi el usuario comenta que se le presentó un error, debes pedirle que envíe esos datos, no pedirlos debes responder lo siguiente:\nPara poder verificar el error o la transacción necesitamos que nos envíes a reclamoswee@telco.com.ar lo siguiente:\nCaptura del error\nNombre y Apellido.\nDNI.\nComprobante.\n#7 Generación de DEBIN para CVU o cuentas virtuales\nPor consultas sobre DEBIN sobre CVU o cuentas virtuales, recuerde que el medio de pago solo está habilitado para entidades bancarias, no billeteras virtuales\nEl método de pago DEBIN NO está disponible para Cuentas Virtuales (Mercadopago, Personal Pay, Naranja X, entre otras). Si usted desea pagar con DEBIN, debe realizarlo a través de cuenta bancaria tradicional. (por ejemplo, para una cuenta bancaria en Banco de Corrientes).\nSegún las regulaciones del BCRA (Banco Central de la República Argentina), el DEBIN solo está habilitado para entidades bancarias. \nPuede optar por otros métodos de pago, como ser:\n#1 - Tarjeta \tde débito/crédito\n#2 - Offline (voucher para abonar por Rapipago)\n\n#8 - Diccionario:\nEn caso que el usuario te consulte sobre alguno responde:\n 1- QR: es un medio de pago digital donde utilizas la cámara de tu teléfono, para escanear un código  y así proceder al pago, es el medio más utilizado. Se utilizan billeteras virtuales como Mercado Pago, MODO, entre otros.\n2- DEBIN: Se realiza a través del banco que utilices si este lo permite, se emite la solicitud y desde su entidad bancaria debe aceptarla.\n3- Offline: te provee un voucher donde podes ir a pagar a oficinas como rapipago o multipago\n4- Crédito: Pago con tarjeta de crédito..\n5- Débito: Pago con tarjeta de débito..\n",
                 },
                 ...cuerpo 
             ],
             "options": {
-                "temperature": 0.9,
-                "top_p": 0.4,
-                "num_predict": 100,
+                "temperature": 0.1,
+                "top_p": 0.1,
+                "top_k": 10,
+                "num_predict": -1,
+                "mirostat_eta": 0.4,
+                "mirostat_tau": 2,
+                "mirostat": 2,
+                "min_p": 0.05
             },
             "stream": true
         };
         
 
-        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVjYjkwMWI1LTNhMTItNDQ1Ni1iNWE2LWQxYmJlNWM4ZmQxYyJ9.puVYN61p6pucr7nU06umf06GlujVuK6BxLeMg077_zM";    
+        const token = document.getElementById('chatbotTelCo').getAttribute('data-token');    
         if(data.messages[1].content == '' || data.messages[1].content == undefined){
             data.messages[1].content = "Dile al usuario que ocurrio un error";
         }
         try {
             const response = await fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                    'Accept': 'application/json',
+                headers: {                    
+                    'Authorization': `Bearer ${token}`,                    
                 },
                 body: JSON.stringify(data),
             });
@@ -176,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-            const textResponse = await response.clone().text();
+            const textResponse = await response.clone().text(); 
             
             const jsonObjects = textResponse
             .trim()
@@ -295,15 +291,13 @@ document.addEventListener("DOMContentLoaded", () => {
     
         document.getElementById('pdfInput').addEventListener('change', () => {
         labelInput.className += ' fileAñadido'
-        uploadPDF();
+        // uploadPDF();
         });
     }).catch((error) => {
-        console.error('Error al cargar PDF.js:', error);
+        // console.error('Error al cargar PDF.js:', error);
     });
 
     const cargaRespuestaUser = (message, pdfText = null) =>{
-
-        // "Use the following context as your learned knowledge, inside <context></context> XML tags.\n\t<context>\n\t " + pdftext +"\n\n\t</context>\n\t\n\tWhen answer to user:\n\t- If you don't know, just say that you don't know.\n\t- If you don't know when you are not sure, ask for clarification.\n\tAvoid mentioning that you obtained the information from the context.\n\tAnd answer according to the language of the user's question.\n\t\t\t\n\tGiven the context information, answer the query.\n\tQuery: Saluda la usuario"
         let body = sessionStorage.getItem('body');
         let cuerpo = [];
         
@@ -369,7 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const figure = document.createElement('figure');
         figure.className = 'avatar';
         const img = document.createElement('img');
-        img.src = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg';
+        img.src = 'https://i.ibb.co/H2DzDF9/image-2.png';
         figure.appendChild(img);
         loadingMessage.appendChild(figure);
         loadingMessage.appendChild(document.createElement('span'));
@@ -383,7 +377,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const newFigure = document.createElement('figure');
             newFigure.className = 'avatar';
             const newImg = document.createElement('img');
-            newImg.src = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg';
+            newImg.src = 'https://i.ibb.co/H2DzDF9/image-2.png';
             newFigure.appendChild(newImg);
             newMessage.appendChild(newFigure);
             newMessage.innerHTML += messageBot;
@@ -413,10 +407,10 @@ document.addEventListener("DOMContentLoaded", () => {
         sessionStorage.setItem('body', '');
         sessionStorage.setItem('LastAns', '')
         clearDivChat();
-        insertMessage('Saluda al usuario. SOLO EL RESULTADO, NINGUN TEXTO MAS.', true);
+        insertMessage('Saluda al usuario.', true);
 
     }
 
     document.getElementById('clearChat').addEventListener('click', clearChat);
 
-    });
+    // });
