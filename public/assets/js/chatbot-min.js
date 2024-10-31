@@ -152,7 +152,7 @@
         
 
         const token = document.getElementById('chatbotTelCo').getAttribute('data-token');    
-        if(data.messages[0].content == '' || data.messages[1].content == undefined){
+        if(data.messages[0].content == '' || data.messages[0].content == undefined){
             data.messages[0].content = "Dile al usuario que ocurrio un error";
         }
         try {
