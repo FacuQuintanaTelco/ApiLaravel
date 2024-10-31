@@ -133,7 +133,7 @@
         let cuerpo = cargaRespuestaUser(message);
         
         const data = {
-            "model": "llama3.1:latest",
+            "model":"ollama-weebotllm:latest",
             "messages": [
                 {
                     "role": "system",
@@ -163,7 +163,8 @@
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {                    
-                    'Authorization': `Bearer ${token}`,                    
+                    'Authorization': `Bearer ${token}`,  
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(data),
             });
