@@ -133,7 +133,7 @@
         let cuerpo = cargaRespuestaUser(message);
         
         const data = {
-            "model":"ollama-weebotllm:latest",
+            "model":"llama3.1:latest", //debe tener el agente de pasarela
             "messages": [                
                 ...cuerpo 
             ],
@@ -146,8 +146,9 @@
                 "mirostat_tau": 2,
                 "mirostat": 2,
                 "min_p": 0.05
-            },
-            "stream": true
+            },            
+            "tool_ids":["prueba2"],            
+            "stream": false
         };
         
 
@@ -169,29 +170,9 @@
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-            const textResponse = await response.clone().text(); 
-            
-            const jsonObjects = textResponse
-            .trim()
-            .split(/(?<=})\s*(?={)/) // Divide entre los objetos JSON
-            .map(line => {
-                try {                                
-                    return JSON.parse(line);
-                } catch (e) {
-                    console.error('Error parsing JSON:', e);
-                    return null;
-                }
-            })
-            .filter(o => o && o.message && o.message.content)
-            
-            let reps = []
-            // Solo toma el primer mensaje de respuesta        
-                jsonObjects.forEach(message => {                
-                    reps.push(message.message.content);
-                })            
-                
-            cargaRespuestaIA(reps);
-            return reps.join('')
+            const textResponse = await response.json();                                                            
+            cargaRespuestaIA(textResponse.message?.content);
+            return textResponse.message?.content
 
         } catch (error) {
             console.error('Error:', error);
@@ -204,7 +185,7 @@
         cuerpo.push(
             {
                 "role": "assistant",
-                "content": reps.join('')
+                "content": reps
             }
         );
         sessionStorage.setItem('body', JSON.stringify(cuerpo));        
@@ -366,7 +347,7 @@
         loadingMessage.appendChild(document.createElement('span'));
         messages.appendChild(loadingMessage);
         updateScrollbar();
-
+    
         const creacionDivMsg = (messageBot) => {        
             loadingMessage.remove(); 
             const newMessage = document.createElement('div');
@@ -377,21 +358,29 @@
             newImg.src = 'https://i.ibb.co/H2DzDF9/image-2.png';
             newFigure.appendChild(newImg);
             newMessage.appendChild(newFigure);
-            newMessage.innerHTML += messageBot;
+    
+            // Reemplazar saltos de línea y asteriscos por HTML
+            const formattedMessage = messageBot
+                .replace(/\n/g, '<br>') // Cambiar saltos de línea por <br>
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Cambiar **texto** por <strong>texto</strong>
+    
+            newMessage.innerHTML += formattedMessage;
             messages.appendChild(newMessage);
             newMessage.classList.add('new');
             setDate(); 
             updateScrollbar(); 
         }
-
+    
         if (messageBot !== '' && !precarga) {
             setTimeout(function() {            
                 creacionDivMsg(messageBot);
             }, 0); 
-        }else if(messageBot !== '' && precarga){
+        } else if (messageBot !== '' && precarga) {
             creacionDivMsg(messageBot);
         }
     }
+    
+    
 
     const clearDivChat = () => {
         const messagesContent = document.getElementById('messages-content');
@@ -404,7 +393,7 @@
         sessionStorage.setItem('body', '');
         sessionStorage.setItem('LastAns', '')
         clearDivChat();
-        insertMessage('Saluda al usuario.', true);
+        // insertMessage('Saluda al usuario.', true);
 
     }
 
